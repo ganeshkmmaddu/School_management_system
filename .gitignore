@@ -1,0 +1,21 @@
+# NetBeans and IDE metadata
+nbproject/private/
+.nb-gradle/
+.classpath
+.project
+.settings/
+
+# Generated build and distribution output
+build/
+dist/
+*.war
+*.ear
+
+# Local deployment and environment settings
+**/tomcat*.properties
+.env
+.env.*
+
+# Operating-system files
+.DS_Store
+Thumbs.db
