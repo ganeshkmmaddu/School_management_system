@@ -36,9 +36,16 @@ public class AppController {
         session.setAttribute("u_name", users.getU_name());
     }
 
+    private boolean hasRole(HttpSession session, int roleId) {
+        Users users = (Users) session.getAttribute("users");
+        return users != null && users.getR_id() == roleId;
+    }
+
     @RequestMapping(value = "/adminHome", method = RequestMethod.GET)
-    public ModelAndView showadminHome(Users users, HttpSession session) {
-        addUserToSession(users, session);
+    public ModelAndView showadminHome(HttpSession session) {
+        if (!hasRole(session, 1)) {
+            return new ModelAndView("redirect:login.htm");
+        }
         ModelAndView model = new ModelAndView();
 //        List<Users> users = appService.getAllUsers();
         List<NoticeBoard> notice = appService.getAllNotice();
@@ -100,7 +107,10 @@ public class AppController {
     }
 
     @RequestMapping(value = "/teacherHome", method = RequestMethod.GET)
-    public ModelAndView showTeacherHome() {
+    public ModelAndView showTeacherHome(HttpSession session) {
+        if (!hasRole(session, 2)) {
+            return new ModelAndView("redirect:login.htm");
+        }
         ModelAndView model = new ModelAndView();
         List<NoticeBoard> nts = appService.getAllNotice();
         model.getModelMap().put("nts", nts);
@@ -596,7 +606,10 @@ public class AppController {
     }
 
     @RequestMapping(value = "/studentHome", method = RequestMethod.GET)
-    public ModelAndView showStudentHome() {
+    public ModelAndView showStudentHome(HttpSession session) {
+        if (!hasRole(session, 3)) {
+            return new ModelAndView("redirect:login.htm");
+        }
         ModelAndView model = new ModelAndView();
         Users users = new Users();
         List<NoticeBoard> nts = appService.getAllNotice();
