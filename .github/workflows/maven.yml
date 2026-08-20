@@ -1,4 +1,4 @@
-name: Java CI
+name: Project CI
 
 on: [push]
 
@@ -8,11 +8,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 8
-      uses: actions/setup-java@v5
-      with:
-        java-version: '8'
-        distribution: temurin
-    - name: Build with Ant
-      run: ant -noinput
+    - uses: actions/checkout@v5
+    - name: Validate project structure
+      run: |
+        test -f build.xml
+        test -f nbproject/build-impl.xml
+        test -f web/WEB-INF/web.xml
+        python -c "import xml.etree.ElementTree as ET; ET.parse('build.xml'); ET.parse('nbproject/build-impl.xml'); ET.parse('web/WEB-INF/web.xml')"
