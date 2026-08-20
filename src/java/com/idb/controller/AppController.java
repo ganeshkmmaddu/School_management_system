@@ -513,14 +513,20 @@ public class AppController {
     }
 
     @RequestMapping(value = "/teacher_detail", method = RequestMethod.POST)
-    public ModelAndView updateTeacherInfo(Teachers teachers){
-    ModelAndView model = new ModelAndView();
-    appService.updateTeacherInfo(teachers);
-    return model;
+    public ModelAndView updateTeacherInfo(Teachers teachers, HttpSession session) {
+        if (!hasRole(session, 1)) {
+            return new ModelAndView("redirect:login.htm");
+        }
+        ModelAndView model = new ModelAndView();
+        appService.updateTeacherInfo(teachers);
+        return model;
     }
     
     @RequestMapping(value = "/teachers", method = RequestMethod.POST)
-    public String addTeacher(ModelAndView model, Teachers teachers, HttpServletRequest request) {
+    public String addTeacher(ModelAndView model, Teachers teachers, HttpServletRequest request, HttpSession session) {
+        if (!hasRole(session, 1)) {
+            return "redirect:/login.htm";
+        }
 
         if (!teachers.getT_img().getOriginalFilename().equals("")) {
             FileUploadUtility.uploadFileTeaher(request, teachers.getT_img(), teachers.getT_name(), teachers.getP_number());
@@ -531,7 +537,10 @@ public class AppController {
     }
 
     @RequestMapping(value = "/students", method = RequestMethod.POST)
-    public String addStudents(ModelAndView model, Students students, HttpServletRequest request) {
+    public String addStudents(ModelAndView model, Students students, HttpServletRequest request, HttpSession session) {
+        if (!hasRole(session, 1)) {
+            return "redirect:/login.htm";
+        }
         appService.addStudents(students);
 
         if (!students.getS_img().getOriginalFilename().equals("")) {
@@ -542,34 +551,49 @@ public class AppController {
     }
 
     @RequestMapping(value = "/subject", method = RequestMethod.POST)
-    public String addsubject(ModelAndView model, Subjects subject) {
+    public String addsubject(ModelAndView model, Subjects subject, HttpSession session) {
+        if (!hasRole(session, 1)) {
+            return "redirect:/login.htm";
+        }
         appService.addSubject(subject);
         model.getModelMap().put("subject", subject);
         return "redirect:subject.htm";
     }
 
     @RequestMapping(value = "/session", method = RequestMethod.POST)
-    public String addUser(ModelAndView model, Sessions sessions) {
+    public String addUser(ModelAndView model, Sessions sessions, HttpSession session) {
+        if (!hasRole(session, 1)) {
+            return "redirect:/login.htm";
+        }
         appService.addSession(sessions);
         model.getModelMap().put("session", sessions);
         return "redirect:session.htm";
     }
 
     @RequestMapping(value = "/classes", method = RequestMethod.POST)
-    public String addClass(ModelAndView model, Classes classes) {
+    public String addClass(ModelAndView model, Classes classes, HttpSession session) {
+        if (!hasRole(session, 1)) {
+            return "redirect:/login.htm";
+        }
         appService.addClasses(classes);
         return "redirect:classes.htm";
     }
 
     @RequestMapping(value = "/notice", method = RequestMethod.POST)
-    public String addNotice(ModelAndView model, NoticeBoard noticeBoard) {
+    public String addNotice(ModelAndView model, NoticeBoard noticeBoard, HttpSession session) {
+        if (!hasRole(session, 1)) {
+            return "redirect:/login.htm";
+        }
         appService.addNotice(noticeBoard);
         model.getModelMap().put("classes", noticeBoard);
         return "redirect:notice.htm";
     }
 
     @RequestMapping(value = "/update_notice", method = RequestMethod.POST)
-    public String updateNotice(ModelAndView model, NoticeBoard noticeBoard) {
+    public String updateNotice(ModelAndView model, NoticeBoard noticeBoard, HttpSession session) {
+        if (!hasRole(session, 1)) {
+            return "redirect:/login.htm";
+        }
         appService.updateNptice(noticeBoard.getN_id(), noticeBoard.getN_title(), noticeBoard.getN_description());
         model.getModelMap().put("classes", noticeBoard);
         return "redirect:notice.htm";
@@ -583,7 +607,10 @@ public class AppController {
 //    }
     @RequestMapping(value = "/add_attendance", method = RequestMethod.POST)
     public String dailyAttendance(ModelAndView model, Attendance attendance, @RequestParam(value = "c_id", required = false) Integer c_id,
-            @RequestParam(value = "sess_id", required = false) Integer sess_id) {
+            @RequestParam(value = "sess_id", required = false) Integer sess_id, HttpSession session) {
+        if (!hasRole(session, 2)) {
+            return "redirect:/login.htm";
+        }
         Integer cId = c_id;
         Integer sessId = sess_id;
         appService.addAttendance(attendance);
@@ -599,7 +626,10 @@ public class AppController {
     }
 
     @RequestMapping(value = "/add_result", method = RequestMethod.POST)
-    public String addResult(ModelAndView model, Result result) {
+    public String addResult(ModelAndView model, Result result, HttpSession session) {
+        if (!hasRole(session, 2)) {
+            return "redirect:/login.htm";
+        }
         appService.addResult(result);
         model.getModelMap().put("result", result);
         return "redirect:add_result.htm";
