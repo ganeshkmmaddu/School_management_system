@@ -369,7 +369,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `u_id` int(10) unsigned NOT NULL auto_increment,
   `u_name` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `r_id` int(10) unsigned NOT NULL,
   `email` varchar(45) NOT NULL,
   `phone` varchar(45) NOT NULL,

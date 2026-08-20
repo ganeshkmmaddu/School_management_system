@@ -16,7 +16,10 @@ import com.idb.model.Students;
 import com.idb.model.Subjects;
 import com.idb.model.Teachers;
 import com.idb.model.Users;
+import com.idb.utility.PasswordUtil;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -36,7 +39,7 @@ public class AppServiceImp implements AppService {
     @Override
     public void addUser(Users users) {
         String sql = "insert into Users (u_name,password,r_id,email,phone) value(?,?,?,?,?)";
-        jdbcTemplate.update(sql, new Object[]{users.getU_name(), users.getPassword(), users.getR_id(), users.getEmail(), users.getPhone()});
+        jdbcTemplate.update(sql, new Object[]{users.getU_name(), PasswordUtil.hashPassword(users.getPassword()), users.getR_id(), users.getEmail(), users.getPhone()});
     }
 
     @Override
@@ -59,9 +62,20 @@ public class AppServiceImp implements AppService {
 
     @Override
     public List<Users> checkUser(String name, String password, int r_id) {
-        String sql = "select u_name, password, r_id from Users where u_name=? and password=? and r_id=?";
-        List user = jdbcTemplate.queryForList(sql, name, password, r_id);
-        return user;
+        String sql = "select u_name, password, r_id from Users where u_name=? and r_id=?";
+        List<Map<String, Object>> candidates = jdbcTemplate.queryForList(sql, name, r_id);
+        List<Users> authenticatedUsers = new ArrayList<>();
+        for (Map<String, Object> candidate : candidates) {
+            String storedPassword = (String) candidate.get("password");
+            if (PasswordUtil.matches(password, storedPassword)) {
+                if (!PasswordUtil.isHashed(storedPassword)) {
+                    String updateSql = "update Users set password=? where u_name=? and r_id=?";
+                    jdbcTemplate.update(updateSql, PasswordUtil.hashPassword(password), name, r_id);
+                }
+                authenticatedUsers.add(new Users());
+            }
+        }
+        return authenticatedUsers;
     }
 
 //    @Override
