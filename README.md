@@ -67,17 +67,16 @@ mysql -u root -p springschool < "osmDB20181121 2147.sql"
 
 ### 3. Configure the database connection
 
-The default connection is defined in `web/WEB-INF/dispatcher-servlet.xml`:
+The connection is configured in `web/WEB-INF/dispatcher-servlet.xml`. Each value can be overridden with an environment variable:
 
-| Setting | Default value |
+| Environment variable | Default value |
 | --- | --- |
-| Host | `localhost` |
-| Port | `3306` |
-| Database | `springschool` |
-| Username | `root` |
-| Password | `root` |
+| `DB_DRIVER` | `com.mysql.jdbc.Driver` |
+| `DB_URL` | `jdbc:mysql://localhost:3306/springschool` |
+| `DB_USERNAME` | `root` |
+| `DB_PASSWORD` | `root` |
 
-Update these values to match your local MySQL installation. Do not use the default credentials in production.
+For local development, the defaults work with a MySQL database named `springschool`. For deployment, set these variables in Tomcat or the hosting environment and do not commit credentials to the repository. Do not use the default password in production.
 
 ### 4. Configure Tomcat in the IDE
 
